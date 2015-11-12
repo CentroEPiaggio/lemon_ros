@@ -37,7 +37,7 @@ find_package(catkin REQUIRED COMPONENTS
 # generate_messages(DEPENDENCIES std_msgs geometry_msgs)
 
 catkin_package(
-  INCLUDE_DIRS include/
+  INCLUDE_DIRS include/ src/
   LIBRARIES ${PROJECT_NAME} lemon
 #  CATKIN_DEPENDS roscpp
    #DEPENDS
@@ -63,9 +63,28 @@ install(TARGETS ${PROJECT_NAME}
          LIBRARY DESTINATION "${CATKIN_PACKAGE_LIB_DESTINATION}" COMPONENT shlib
 )
 
+INSTALL(
+  DIRECTORY ./lemon lemon/bits lemon/concepts
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/lemon
+  COMPONENT headers
+  FILES_MATCHING PATTERN "*.h"
+)
+
+INSTALL(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/lemon/config.h
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}/lemon
+  COMPONENT headers
+)
+
+INSTALL(
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/lemon.pc
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/pkgconfig
+)
+
 add_custom_command(TARGET ${PROJECT_NAME}
     POST_BUILD
-    COMMAND echo 'Installing lemon library...'
-    COMMAND make install
-    WORKING_DIRECTORY ${CATKIN_PACKAGE_BIN_DESTINATION}/../../
+    COMMAND echo 'Installing lemon config.h...'
+#     COMMAND make install
+#     WORKING_DIRECTORY ${CATKIN_PACKAGE_BIN_DESTINATION}/../../
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/src/lemon/config.h ${CMAKE_CURRENT_SOURCE_DIR}/src/lemon/config.h
 )
